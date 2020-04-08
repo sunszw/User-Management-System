@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssmsun.management.dao.UserMapper">
+    <resultMap id="UserMap" type="com.ssmsun.management.entity.User">
+        <id property="userid" column="userid"></id>
+        <result property="username" column="username"></result>
+        <result property="password" column="password"></result>
+        <result property="salt" column="salt"></result>
+        <result property="email" column="email"></result>
+        <result property="phone" column="phone"></result>
+        <result property="avatar" column="avatar"></result>
+        <result property="gender" column="gender"></result>
+        <result property="amount" column="amount"></result>
+        <result property="credate" column="credate"></result>
+        <result property="confirm" column="confirm"></result>
+    </resultMap>
+
+    <insert id="addUser" useGeneratedKeys="true" keyProperty="userid">
+        insert into
+            pub_user(
+                username,password,salt,email,phone,gender,avatar,amount,credate,confirm
+            )
+        values(
+            #{username},#{password},#{salt},#{email},#{phone},#{gender},#{avatar},#{amount},#{credate},#{confirm}
+        )
+    </insert>
+
+    <select id="getUser" resultMap="UserMap">
+          select
+            userid,
+            username,
+            password,
+            salt
+        from
+            pub_user
+        where
+            username=#{username}
+    </select>
+
+    <select id="getAllUser" resultMap="UserMap">
+        select
+            userid,username,email,phone,gender,amount,credate,confirm
+        from
+            pub_user
+    </select>
+
+    <select id="person" resultMap="UserMap">
+        select
+            userid,username,password,salt,email,phone,gender,avatar,amount,credate,confirm
+        from
+            pub_user
+        where
+            userid=#{userid}
+    </select>
+
+    <select id="getPhone"  resultMap="UserMap">
+        SELECT userid,phone FROM pub_user
+    </select>
+
+</mapper>

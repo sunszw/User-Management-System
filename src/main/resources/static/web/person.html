@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../jq/jquery-3.4.1.min.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+<body>
+<div><img src="file:///E:/Resources/head portrait/d5061dba0c9a45efb83abbab34981cfc.jpg"></div>
+<table align="center" border="1">
+    <tr align="center" style="font-size: 20px">
+        <td>ID</td>
+        <td>名称</td>
+        <td>密码</td>
+        <td>盐值</td>
+        <td>邮箱</td>
+        <td>手机</td>
+        <td>性别</td>
+        <td>余额</td>
+        <td>创建日期</td>
+        <td>是否验证</td>
+    </tr>
+    <tbody id="tid" style="font-size: 1px">
+    </tbody>
+</table>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            headers: {"token": localStorage.getItem("token")},
+            url: "/user/person",
+            type: "get",
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    let user = json.data;
+                    $("#tid").empty();
+                    let html = '<tr style="font-size: 10px">' +
+                        '<td>#{userid}</td>' +
+                        '<td>#{username}</td>' +
+                        '<td>#{password}</td>' +
+                        '<td>#{salt}</td>' +
+                        '<td>#{email}</td>' +
+                        '<td>#{phone}</td>' +
+                        '<td>#{gender}</td>' +
+                        '<td>#{amount}</td>' +
+                        '<td>#{credate}</td>' +
+                        '<td>#{confirm}</td>' +
+                        '</tr>';
+                    if (user.gender == 1) {
+                        user.gender = "男";
+                    } else {
+                        user.gender = "女";
+                    }
+                    if (user.confirm == 1) {
+                        user.confirm = "是";
+                    } else {
+                        user.confirm = "否";
+                    }
+
+                    html = html.replace(/#{userid}/g, user.userid);
+                    html = html.replace(/#{username}/g, user.username);
+                    html = html.replace(/#{password}/g, user.password);
+                    html = html.replace(/#{salt}/g, user.salt);
+                    html = html.replace(/#{phone}/g, user.phone);
+                    html = html.replace(/#{phone}/g, user.phone);
+                    html = html.replace(/#{gender}/g, user.gender);
+                    html = html.replace(/#{amount}/g, user.amount);
+                    html = html.replace(/#{credate}/g, user.credate);
+                    html = html.replace(/#{confirm}/g, user.confirm);
+
+                    $("#tid").append(html);
+
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("未知错误，请稍后重试！");
+            }
+        });
+    });
+
+</script>
+</html>

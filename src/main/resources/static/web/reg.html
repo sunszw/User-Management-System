@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../jq/jquery-3.4.1.min.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+<body>
+<form id="form-reg">
+    <table align="center" border="1">
+        <tr>
+            <td>用户名：</td>
+            <td colspan="2"><input type="text" id="username" name="username"></td>
+        </tr>
+        <tr>
+            <td>密码：</td>
+            <td colspan="2"><input type="password" id="password" name="password"></td>
+        </tr>
+        <tr>
+            <td>性别：</td>
+            <td colspan="2">
+                <select id="gender" name="gender">
+                    <option value="0">女</option>
+                    <option value="1">男</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>手机：</td>
+            <td colspan="2"><input type="text" id="phone" name="phone"></td>
+        </tr>
+        <tr>
+            <td>邮箱：</td>
+            <td colspan="2"><input type="text" id="email" name="email"></td>
+        </tr>
+        <tr>
+            <td>验证码</td>
+            <td><input type="text" id="code" name="code"></td>
+            <td align="center"><input type="button" value="获取验证码" id="btn-code"></td>
+        </tr>
+        <tr>
+            <td align="center" colspan="3"><input type="button" value=" 提 交 " id="btn-reg"></td>
+        </tr>
+    </table>
+</form>
+</body>
+<script type="text/javascript">
+    $("#btn-reg").click(function () {
+        if ($("#username").val() == "") {
+            alert("用户名不能为空！");
+            return;
+        }
+        if ($("#password").val() == "") {
+            alert("密码不能为空！");
+            return;
+        }
+        if ($("#gender").val() == "") {
+            alert("性别不能为空！");
+            return;
+        }
+        if ($("#phone").val() == "") {
+            alert("电话号码不能为空！");
+            return;
+        }
+        if ($("#email").val() == "") {
+            alert("邮箱不能为空！");
+            return;
+        }
+
+        if ($("#code").val() == "") {
+            alert("验证码不能为空！");
+            return;
+        }
+        $.ajax({
+            url: "/user/reg",
+            type: "post",
+            data: $("#form-reg").serialize(),
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    alert("注册成功！");
+                    location.href = "/web/login.html";
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("未知错误，请稍后重试！");
+            }
+        });
+    });
+
+    $("#btn-code").click(function () {
+        if ($("#phone").val() == "") {
+            alert("电话号码不能为空");
+            return;
+        }
+        $.ajax({
+            url: "/user/code",
+            type: "get",
+            data: $("#form-reg").serialize(),
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    alert("发送成功，请注意查看手机短信！");
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("未知错误，请稍后重试！");
+            }
+        });
+    });
+</script>
+</html>

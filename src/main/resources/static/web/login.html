@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../jq/jquery-3.4.1.min.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+<body>
+<form id="li-login">
+    <table align="center" border="1">
+        <tr>
+            <td>用户名：</td>
+            <td colspan="2"><input type="text" name="username"></td>
+        </tr>
+        <tr>
+            <td>密码</td>
+            <td colspan="2"><input type="password" name="password"></td>
+        </tr>
+        <tr>
+            <td align="center" colspan="3"><input type="button" value=" 提 交 " id="btn-login"></td>
+        </tr>
+    </table>
+</form>
+</body>
+<script type="text/javascript">
+    $("#btn-login").click(function () {
+        $.ajax({
+            url: "/user/login",
+            type: "post",
+            data: $("#li-login").serialize(),
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    localStorage.setItem("token", json.data);
+                    alert("登录成功！");
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("未知错误，请稍后重试！");
+            }
+        });
+    });
+
+</script>
+</html>

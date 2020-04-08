@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../jq/jquery-3.4.1.min.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+<body>
+<h1 align="center">用户信息</h1>
+
+<table align="center" border="1">
+    <tr>
+        <td colspan="7"><a href="person.html">个人资料</a></td>
+    </tr>
+    <tr align="center" style="font-size: 20px">
+        <td>用户ID</td>
+        <td>用户名称</td>
+        <td>用户邮箱</td>
+        <td>用户手机</td>
+        <td>用户性别</td>
+        <td>用户余额</td>
+        <td>创建日期</td>
+        <td>是否验证</td>
+    </tr>
+    <tbody id="tid" style="font-size: 1px">
+    </tbody>
+</table>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            headers: {"token": localStorage.getItem("token")},
+            url: "/user/info",
+            type: "get",
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    let list = json.data;
+                    $("#tid").empty();
+                    for (let i = 0; i < list.length; i++) {
+                        let html = '<tr style="font-size: 10px">' +
+                            '<td>#{userid}</td>' +
+                            '<td>#{username}</td>' +
+                            '<td>#{email}</td>' +
+                            '<td>#{phone}</td>' +
+                            '<td>#{gender}</td>' +
+                            '<td>#{amount}</td>' +
+                            '<td>#{credate}</td>' +
+                            '<td>#{confirm}</td>' +
+                            '</tr>';
+                        if (list[i].gender == 1) {
+                            list[i].gender = "男";
+                        } else {
+                            list[i].gender = "女";
+                        }
+                        if (list[i].confirm == 1) {
+                            list[i].confirm = "是";
+                        } else {
+                            list[i].confirm = "否";
+                        }
+
+                        html = html.replace(/#{userid}/g, list[i].userid);
+                        html = html.replace(/#{username}/g, list[i].username);
+                        html = html.replace(/#{email}/g, list[i].email);
+                        html = html.replace(/#{phone}/g, list[i].phone);
+                        html = html.replace(/#{gender}/g, list[i].gender);
+                        html = html.replace(/#{amount}/g, list[i].amount);
+                        html = html.replace(/#{credate}/g, list[i].credate);
+                        html = html.replace(/#{confirm}/g, list[i].confirm);
+
+                        $("#tid").append(html);
+                    }
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("未知错误，请稍后重试！");
+            }
+        });
+    });
+
+</script>
+</html>
