@@ -15,7 +15,7 @@ public class JWTUtil {
     public static final String SECRET = "GSDGUHSDSDBFJKSHASHFASHDIOASUJIO";
 
     //过期时间:毫秒
-    public static final int EXPIRE = 300000;
+    public static final long EXPIRE = 1000*60*60*24*7;
 
     /**
      * 生成Token
@@ -24,7 +24,7 @@ public class JWTUtil {
      * @return
      * @throws Exception
      */
-    public String createToken(String subject) throws Exception {
+    public String createToken(String subject) {
         Map<String, Object> map = new HashMap<>();
         map.put("alg", "HS256");
         map.put("typ", "JWT");
@@ -34,7 +34,7 @@ public class JWTUtil {
                 .setHeader(map)
                 .setSubject(subject)
                 .setIssuedAt(now)//签发时间
-                .setExpiration(new Date(now.getTime()+EXPIRE))
+                .setExpiration(new Date(now.getTime()+EXPIRE))//有效期
                 .signWith(SignatureAlgorithm.HS512, SECRET)//签名
                 .compact();
 

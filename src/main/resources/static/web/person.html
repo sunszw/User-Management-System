@@ -1,26 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
     <script src="../jq/jquery-3.4.1.min.js" type="text/javascript" charset="UTF-8"></script>
 </head>
 <body>
-<div><img src="file:///E:/Resources/head portrait/d5061dba0c9a45efb83abbab34981cfc.jpg"></div>
-<table align="center" border="1">
+
+<div style="margin-top:10px; margin-left: 50px">
+    <span><img id="avatar" src="../picture/d5061dba0c9a45efb83abbab34981cfc.jpg" width="200px" height="200px"></span>
+    <div>
+        <div id="div-email" style="margin-top:10px">
+
+            <label>验证邮箱后可修改个人信息！</label><input type="button" id="btn-confirm" value="验证邮箱"><br>
+
+            <form id="form-email">
+                <input type="text" id="email" style="width: 200px">
+                <input type="button" id="btn-email" value=" 提 交 " style="width: 50px">
+            </form>
+        </div>
+        <form id="form-avatar" enctype="multipart/form-data" style="margin-top:10px">
+            <input type="file" name="file"><br>
+            <span style="margin-left: 100px"><input type="button" id="btn-upload" value="确定修改"></span>
+        </form>
+        <div style="margin-top:10px">
+            <span><a href="/web/password.html"> 修改密码 </a></span>
+            <spanp style="margin-left:20px"><a href="/web/update.html"> 修改信息 </a></spanp>
+        </div>
+    </div>
+</div>
+<table style="margin-top:10px" align="center" border="1" width="95%">
     <tr align="center" style="font-size: 20px">
-        <td>ID</td>
-        <td>名称</td>
-        <td>密码</td>
-        <td>盐值</td>
-        <td>邮箱</td>
-        <td>手机</td>
-        <td>性别</td>
-        <td>余额</td>
-        <td>创建日期</td>
-        <td>是否验证</td>
+        <td width="5%">ID</td>
+        <td width="10%">名称</td>
+        <td width="20%">邮箱</td>
+        <td width="20%">手机</td>
+        <td width="5%">性别</td>
+        <td width="20%">余额</td>
+        <td width="10%">创建日期</td>
+        <td width="10%">是否验证</td>
     </tr>
-    <tbody id="tid" style="font-size: 1px">
+    <tbody id="tid" style="font-size: 10px">
     </tbody>
 </table>
 </body>
@@ -34,12 +54,17 @@
             success: function (json) {
                 if (json.state == 2000) {
                     let user = json.data;
+                    if (user.avatar != null) {
+                        $("#avatar").attr("src", "../picture/" + user.avatar);
+                    }
+                    if (user.confirm == 1) {
+                        $("#div-email").attr("style", "display:none");
+                    }
+
                     $("#tid").empty();
                     let html = '<tr style="font-size: 10px">' +
                         '<td>#{userid}</td>' +
                         '<td>#{username}</td>' +
-                        '<td>#{password}</td>' +
-                        '<td>#{salt}</td>' +
                         '<td>#{email}</td>' +
                         '<td>#{phone}</td>' +
                         '<td>#{gender}</td>' +
@@ -60,9 +85,7 @@
 
                     html = html.replace(/#{userid}/g, user.userid);
                     html = html.replace(/#{username}/g, user.username);
-                    html = html.replace(/#{password}/g, user.password);
-                    html = html.replace(/#{salt}/g, user.salt);
-                    html = html.replace(/#{phone}/g, user.phone);
+                    html = html.replace(/#{email}/g, user.email);
                     html = html.replace(/#{phone}/g, user.phone);
                     html = html.replace(/#{gender}/g, user.gender);
                     html = html.replace(/#{amount}/g, user.amount);
@@ -70,7 +93,46 @@
                     html = html.replace(/#{confirm}/g, user.confirm);
 
                     $("#tid").append(html);
-
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("未知错误，请稍后重试！");
+            }
+        });
+    });
+    $("#btn-confirm").click(function () {
+        $.ajax({
+            headers: {"token": localStorage.getItem("token")},
+            url: "/user/email",
+            type: "get",
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    alert("发送成功，请注意查看邮箱！");
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("未知错误，请稍后重试！");
+            }
+        });
+    });
+    $("#btn-upload").click(function () {
+        $.ajax({
+            headers: {"token": localStorage.getItem("token")},
+            url: "/user/avatar",
+            type: "post",
+            data: new FormData($("#form-avatar")[0]),
+            contentType: false,
+            processData: false,
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    alert("修改成功！");
+                    $("#avatar").attr("src", "../picture/" + json.data);
                 } else {
                     alert(json.message);
                 }

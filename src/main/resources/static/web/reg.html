@@ -6,8 +6,9 @@
     <script src="../jq/jquery-3.4.1.min.js" type="text/javascript" charset="UTF-8"></script>
 </head>
 <body>
-<form id="form-reg">
-    <table align="center" border="1">
+
+<table align="center" border="1">
+    <form id="form-reg">
         <tr>
             <td>用户名：</td>
             <td colspan="2"><input type="text" id="username" name="username"></td>
@@ -15,6 +16,10 @@
         <tr>
             <td>密码：</td>
             <td colspan="2"><input type="password" id="password" name="password"></td>
+        </tr>
+        <tr>
+            <td>确认密码：</td>
+            <td colspan="2"><input type="password" id="password2" name="password"></td>
         </tr>
         <tr>
             <td>性别：</td>
@@ -41,8 +46,9 @@
         <tr>
             <td align="center" colspan="3"><input type="button" value=" 提 交 " id="btn-reg"></td>
         </tr>
-    </table>
-</form>
+    </form>
+</table>
+
 </body>
 <script type="text/javascript">
     $("#btn-reg").click(function () {
@@ -96,7 +102,7 @@
             return;
         }
         $.ajax({
-            url: "/user/code",
+            url: "/user/phone",
             type: "get",
             data: $("#form-reg").serialize(),
             dataType: "json",

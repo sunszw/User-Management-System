@@ -8,9 +8,9 @@
 <body>
 <h1 align="center">用户信息</h1>
 
-<table align="center" border="1">
+<table align="center" border="1" width="90%">
     <tr>
-        <td colspan="7"><a href="person.html">个人资料</a></td>
+        <td colspan="9"><a href="person.html">个人资料</a></td>
     </tr>
     <tr align="center" style="font-size: 20px">
         <td>用户ID</td>
@@ -21,6 +21,7 @@
         <td>用户余额</td>
         <td>创建日期</td>
         <td>是否验证</td>
+        <td> 操 作 </td>
     </tr>
     <tbody id="tid" style="font-size: 1px">
     </tbody>
@@ -47,6 +48,7 @@
                             '<td>#{amount}</td>' +
                             '<td>#{credate}</td>' +
                             '<td>#{confirm}</td>' +
+                            '<td><a href="#"> 删 除 </a></td>' +
                             '</tr>';
                         if (list[i].gender == 1) {
                             list[i].gender = "男";

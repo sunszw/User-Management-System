@@ -28,12 +28,45 @@
         )
     </insert>
 
+    <update id="changePwd">
+        update
+            pub_user
+        set
+            password=#{password}
+        where
+            userid=#{userid}
+    </update>
+
+    <update id="changeInfo">
+        update
+            pub_user
+        set
+            email=#{email},phone=#{phone}
+        where
+            userid=#{userid}
+    </update>
+
+    <update id="changeAvatar">
+        update
+            pub_user
+        set
+            avatar=#{avatar}
+        where
+            userid=#{userid}
+    </update>
+
+    <update id="changeStatus">
+        update
+            pub_user
+        set
+            confirm = 1
+        where
+            userid=#{userid}
+    </update>
+
     <select id="getUser" resultMap="UserMap">
-          select
-            userid,
-            username,
-            password,
-            salt
+        select
+            userid,username,password,salt
         from
             pub_user
         where
@@ -49,15 +82,11 @@
 
     <select id="person" resultMap="UserMap">
         select
-            userid,username,password,salt,email,phone,gender,avatar,amount,credate,confirm
+            userid,username,email,phone,gender,avatar,amount,credate,confirm
         from
             pub_user
         where
             userid=#{userid}
-    </select>
-
-    <select id="getPhone"  resultMap="UserMap">
-        SELECT userid,phone FROM pub_user
     </select>
 
 </mapper>

@@ -58,6 +58,12 @@ public class GlobalExceptionHandler {
         if (throwable instanceof FileUploadIOException){
             json.setState(612);
         }
+        if (throwable instanceof UpdateUserException){
+            json.setState(613);
+        }
+        if (throwable instanceof UnConfirmException){
+            json.setState(614);
+        }
 
 
         return json;

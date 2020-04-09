@@ -4,6 +4,7 @@ import com.ssmsun.management.dao.UserMapper;
 import com.ssmsun.management.entity.User;
 import com.ssmsun.management.util.encryption.EncryptedPassword;
 import io.lettuce.core.ScriptOutputType;
+import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,8 +14,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @SpringBootTest
 class ManagementApplicationTests {
@@ -117,9 +117,29 @@ class ManagementApplicationTests {
     }
 
     @Test
-    void password()  {
-        String pwd = encryptedPassword.getPassword("123","AA384B0A-693F-425A-9012-0F7E3714A44A");
+    void password() {
+        String pwd = encryptedPassword.getPassword("123", "AA384B0A-693F-425A-9012-0F7E3714A44A");
         System.out.println(pwd);
         System.out.println("56DC3A4924CEB38A1CA5AF076C199E5116C388C871150E75F6A4BE121F127A23");
     }
+
+    @Test
+    void testDate() {
+        Date now = new Date();
+        Date day = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 7));
+        System.out.println(day);
+
+    }
+
+    @Test
+    void testEmail() {
+        StringBuilder builder = new StringBuilder();
+        String charStr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (int i = 0; i < 6; i++) {
+            int index = (int) (Math.random() * charStr.length());
+            builder.append(charStr.charAt(index));
+        }
+        System.out.println(builder.toString());
+    }
+
 }

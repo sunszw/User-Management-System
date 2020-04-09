@@ -17,10 +17,15 @@ public interface UserMapper {
 
     User person(Integer userid);
 
-    Integer ModifUser(User user);
+    Integer changeStatus(Integer userid);
 
-    Integer subUserByid(Integer userid);
+    Integer changePwd(Integer userid,String password);
 
-    List<User> getPhone();
+    Integer changeInfo(Integer userid,String email,String phone);
+
+    Integer changeAvatar(Integer userid, String avatar);
+
+    Integer delUserByid(Integer userid);
+
 
 }

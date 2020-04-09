@@ -2,6 +2,7 @@ package com.ssmsun.management.controller;
 
 
 import com.ssmsun.management.entity.User;
+import com.ssmsun.management.global.exception.UserNotFoundException;
 import com.ssmsun.management.service.impl.UserServiceImpl;
 import com.ssmsun.management.util.json.Json;
 import com.ssmsun.management.util.verify.token.JWTUtil;
@@ -29,6 +30,13 @@ public class UserController {
     @Autowired
     JWTUtil jwtUtil;
 
+    @GetMapping(path = "phone")
+    @ResponseBody
+    public Json<Void> code(User user) {
+        userService.phoneCode(user.getPhone());
+        return new Json<>(SUCCESS);
+    }
+
     @PostMapping(path = "reg")
     @ResponseBody
     public Json<String> reg(User user, String code) throws Exception {
@@ -47,27 +55,41 @@ public class UserController {
 
     @GetMapping(path = "info")
     @ResponseBody
-    public Json<List<User>> info() {
+    public Json<List<User>> info() throws UserNotFoundException {
         List<User> data = userService.userInfo();
         return new Json<>(SUCCESS, data);
     }
 
     @GetMapping(path = "person")
     @ResponseBody
-    public Json<User> person(HttpServletRequest request) {
-        String token = request.getHeader("token");
-        String value = redisTemplate.opsForValue().get(token).toString();
-        Integer userid = Integer.valueOf(jwtUtil.parseToken(value));
+    public Json<User> person(HttpServletRequest request) throws UserNotFoundException {
+        Integer userid = getUserIdFromToken(request);
         User data = userService.person(userid);
         return new Json<>(SUCCESS, data);
     }
 
-    @GetMapping(path = "code")
+    @GetMapping(path = "email")
     @ResponseBody
-    public Json<Void> code(User user) {
-        userService.Code(user.getPhone());
+    public Json<Void> emailCode(HttpServletRequest request) throws Exception {
+        Integer userid = getUserIdFromToken(request);
+        userService.emailCode(userid);
         return new Json<>(SUCCESS);
     }
 
+    @PostMapping(path = "avatar")
+    @ResponseBody
+    public Json<String> avatar(HttpServletRequest request, MultipartFile file) throws Exception {
+        Integer userid = getUserIdFromToken(request);
+        String name = userService.updateAvatar(userid, file);
+        return new Json<>(SUCCESS, name);
+    }
+
+
+    private Integer getUserIdFromToken(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        String value = redisTemplate.opsForValue().get(token).toString();
+        Integer userid = Integer.valueOf(jwtUtil.parseToken(value));
+        return userid;
+    }
 
 }
