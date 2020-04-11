@@ -37,13 +37,28 @@ public class UserController {
         return new Json<>(SUCCESS);
     }
 
+    @GetMapping(path = "phone2")
+    @ResponseBody
+    public Json<Void> code2(HttpServletRequest request) throws UserNotFoundException {
+        Integer userid = getUserIdFromToken(request);
+        userService.phoneCode2(userid);
+        return new Json<>(SUCCESS);
+    }
+
+    @GetMapping(path = "email")
+    @ResponseBody
+    public Json<Void> emailCode(HttpServletRequest request) throws Exception {
+        Integer userid = getUserIdFromToken(request);
+        userService.emailCode(userid);
+        return new Json<>(SUCCESS);
+    }
+
     @PostMapping(path = "reg")
     @ResponseBody
     public Json<String> reg(User user, String code) throws Exception {
         userService.regUser(user, code);
         return new Json<>(SUCCESS);
     }
-
 
     @PostMapping(path = "login")
     @ResponseBody
@@ -68,11 +83,19 @@ public class UserController {
         return new Json<>(SUCCESS, data);
     }
 
-    @GetMapping(path = "email")
+    @PostMapping(path = "confirm")
     @ResponseBody
-    public Json<Void> emailCode(HttpServletRequest request) throws Exception {
+    public Json<Void> confirm(HttpServletRequest request, String code) throws Exception {
         Integer userid = getUserIdFromToken(request);
-        userService.emailCode(userid);
+        userService.userConfirm(userid, code);
+        return new Json<>(SUCCESS);
+    }
+
+    @PostMapping(path = "password")
+    @ResponseBody
+    public Json<String> password(HttpServletRequest request, @RequestParam("origPwd") String password,@RequestParam("newPwd") String newPwd, String code) throws Exception {
+        Integer userid = getUserIdFromToken(request);
+        userService.updatePassword(userid, password, newPwd, code);
         return new Json<>(SUCCESS);
     }
 
@@ -84,6 +107,20 @@ public class UserController {
         return new Json<>(SUCCESS, name);
     }
 
+    @PostMapping(path = "change")
+    @ResponseBody
+    public Json<String> changeInfo(HttpServletRequest request, User user) throws Exception {
+        Integer userid = getUserIdFromToken(request);
+        userService.updateInfo(userid,user);
+        return new Json<>(SUCCESS);
+    }
+
+    @PostMapping(path = "{delid}/delete")
+    @ResponseBody
+    public Json<String> delete(@PathVariable("delid") Integer userid) throws Exception {
+        userService.subUser(userid);
+        return new Json<>(SUCCESS);
+    }
 
     private Integer getUserIdFromToken(HttpServletRequest request) {
         String token = request.getHeader("token");

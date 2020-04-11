@@ -27,6 +27,7 @@ public class User implements Serializable {
     private Double amount;
     private LocalDateTime credate;
     private Integer confirm;
+    private Integer vip;
 
 
 }

@@ -11,7 +11,7 @@ public interface UserMapper {
 
     Integer addUser(User user);
 
-    User getUser(String username);
+    User getUserByUsername(String username);
 
     List<User> getAllUser();
 
@@ -19,9 +19,9 @@ public interface UserMapper {
 
     Integer changeStatus(Integer userid);
 
-    Integer changePwd(Integer userid,String password);
+    Integer changePwd(Integer userid, String password);
 
-    Integer changeInfo(Integer userid,String email,String phone);
+    Integer changeInfoByUserid(Integer userid, String email, String phone, Integer gender);
 
     Integer changeAvatar(Integer userid, String avatar);
 

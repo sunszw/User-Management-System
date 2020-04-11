@@ -5,43 +5,50 @@
 
 <mapper namespace="com.ssmsun.management.dao.UserMapper">
     <resultMap id="UserMap" type="com.ssmsun.management.entity.User">
-        <id property="userid" column="userid"></id>
-        <result property="username" column="username"></result>
-        <result property="password" column="password"></result>
-        <result property="salt" column="salt"></result>
-        <result property="email" column="email"></result>
-        <result property="phone" column="phone"></result>
-        <result property="avatar" column="avatar"></result>
-        <result property="gender" column="gender"></result>
-        <result property="amount" column="amount"></result>
-        <result property="credate" column="credate"></result>
-        <result property="confirm" column="confirm"></result>
+        <id property="userid" column="userid"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="salt" column="salt"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <result property="avatar" column="avatar"/>
+        <result property="gender" column="gender"/>
+        <result property="amount" column="amount"/>
+        <result property="credate" column="credate"/>
+        <result property="confirm" column="confirm"/>
+        <result property="vip" column="vip"/>
     </resultMap>
 
     <insert id="addUser" useGeneratedKeys="true" keyProperty="userid">
         insert into
             pub_user(
-                username,password,salt,email,phone,gender,avatar,amount,credate,confirm
+                username,password,salt,email,phone,gender,avatar,amount,credate,confirm,vip
             )
         values(
-            #{username},#{password},#{salt},#{email},#{phone},#{gender},#{avatar},#{amount},#{credate},#{confirm}
+            #{username},#{password},#{salt},#{email},#{phone},#{gender},#{avatar},#{amount},#{credate},#{confirm},#{vip}
         )
     </insert>
+
+    <delete id="delUserByid">
+        delete from
+            pub_user
+        where  userid=#{userid}
+    </delete>
+
+    <update id="changeStatus">
+        update
+            pub_user
+        set
+            confirm = 1
+        where
+            userid=#{userid}
+    </update>
 
     <update id="changePwd">
         update
             pub_user
         set
             password=#{password}
-        where
-            userid=#{userid}
-    </update>
-
-    <update id="changeInfo">
-        update
-            pub_user
-        set
-            email=#{email},phone=#{phone}
         where
             userid=#{userid}
     </update>
@@ -55,16 +62,16 @@
             userid=#{userid}
     </update>
 
-    <update id="changeStatus">
+    <update id="changeInfoByUserid">
         update
             pub_user
         set
-            confirm = 1
+            email=#{email},phone=#{phone},gender=#{gender}
         where
             userid=#{userid}
     </update>
 
-    <select id="getUser" resultMap="UserMap">
+    <select id="getUserByUsername" resultMap="UserMap">
         select
             userid,username,password,salt
         from
@@ -75,14 +82,14 @@
 
     <select id="getAllUser" resultMap="UserMap">
         select
-            userid,username,email,phone,gender,amount,credate,confirm
+            userid,username,email,phone,gender,amount,vip,credate,confirm
         from
             pub_user
     </select>
 
     <select id="person" resultMap="UserMap">
         select
-            userid,username,email,phone,gender,avatar,amount,credate,confirm
+            userid,username,password,salt,email,phone,gender,avatar,amount,vip,credate,confirm
         from
             pub_user
         where

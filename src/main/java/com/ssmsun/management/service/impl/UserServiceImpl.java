@@ -12,6 +12,7 @@ import com.ssmsun.management.util.verify.token.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
@@ -45,6 +46,7 @@ public class UserServiceImpl implements UserService {
     EncryptedPassword encryptedPassword;
 
     private String aliyunCode;
+    private String aliyunCode2;
     private String mailCode;
 
 
@@ -68,41 +70,55 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void regUser(User user, String code) throws Exception {
-//        if (aliyunCode == null) {
-//            throw new RuntimeException("获取验证码失败!");
-//        }
-//        if (!aliyunCode.equals(code)) {
-//            throw new RuntimeException("验证码错误!");
-//        }
+    public void phoneCode2(Integer userid) throws UserNotFoundException {
+        User result = userMapper.person(userid);
+        if (result == null) {
+            throw new UserNotFoundException("用户不存在!");
+        }
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            String ran = String.valueOf((int) (Math.random() * 9 + 1));
+            str.append(ran);
+        }
+        aliyunCode2 = str.toString();
+        regCode.sendCode(result.getPhone(), aliyunCode2);
+    }
 
-        User result = userMapper.getUser(user.getUsername());
+    @Override
+    public void regUser(User user, String code) throws Exception {
+        if (aliyunCode == null) {
+            throw new VerifyGetFailException("获取验证码失败!");
+        }
+        if (!aliyunCode.equals(code)) {
+            throw new VerifyNotMatchException("验证码错误!");
+        }
+        User result = userMapper.getUserByUsername(user.getUsername());
         if (result != null) {
             throw new UsernameRepeatException("用户名已存在！");
         }
-
         String saltUUID = UUID.randomUUID().toString().toUpperCase();
         String SHA256Pwd = encryptedPassword.getPassword(user.getPassword(), saltUUID);
+        System.out.println("reg:" + SHA256Pwd);
         user.setPassword(SHA256Pwd);
         user.setSalt(saltUUID);
         user.setAmount(0.00);
         user.setAvatar("d5061dba0c9a45efb83abbab34981cfc.jpg");
         user.setCredate(LocalDateTime.now());
         user.setConfirm(0);
+        user.setVip(0);
         Integer row = userMapper.addUser(user);
         if (row != 1) {
             throw new InsertUserException("新增用户失败！");
         }
     }
 
-
     @Override
     public String login(String username, String password) throws Exception {
-        User result = userMapper.getUser(username);
+        User result = userMapper.getUserByUsername(username);
         if (result == null) {
             throw new UserNotFoundException("用户不存在!");
         }
-        if (!(encryptedPassword.getPassword(password, result.getSalt()).toUpperCase()).equals(result.getPassword())) {
+        if (!(encryptedPassword.getPassword(password, result.getSalt())).equals(result.getPassword())) {
             throw new PasswordNotMatchException("密码错误");
         }
         String key = UUID.randomUUID().toString();
@@ -139,18 +155,61 @@ public class UserServiceImpl implements UserService {
             builder.append(charStr.charAt(index));
         }
         mailCode = builder.toString();
-        emailCode.sendMail(result.getEmail(),mailCode);
+        emailCode.sendMail(result.getEmail(), mailCode);
     }
 
     @Override
-    public void userConfirm(Integer userid, String code) {
+    public void userConfirm(Integer userid, String code) throws Exception {
+        if (mailCode == null) {
+            throw new VerifyGetFailException("获取验证码失败!");
+        }
+        if (!mailCode.equals(code)) {
+            throw new VerifyNotMatchException("验证码错误!");
+        }
+        Integer row = userMapper.changeStatus(userid);
+        if (row != 1) {
+            throw new UpdateUserException("验证失败！");
+        }
+    }
 
+    @Override
+    public void updatePassword(Integer userid, String password, String newPwd, String code) throws Exception {
+        if (aliyunCode2 == null) {
+            throw new VerifyGetFailException("获取验证码失败!");
+        }
+        if (!aliyunCode2.equals(code)) {
+            throw new VerifyNotMatchException("验证码错误!");
+        }
+        User result = userMapper.person(userid);
+        if (result == null) {
+            throw new UserNotFoundException("用户不存在!");
+        }
+        String oldPwd = encryptedPassword.getPassword(password, result.getSalt());
+        if (!result.getPassword().equals(oldPwd)) {
+            throw new PasswordNotMatchException("密码不匹配！");
+        }
+        Integer row = userMapper.changePwd(userid, encryptedPassword.getPassword(newPwd, result.getSalt()));
+        if (row != 1) {
+            throw new UpdateUserException("修改密码失败！");
+        }
+    }
+
+    @Override
+    public void updateInfo(Integer userid, User user) throws Exception {
+        User result = userMapper.person(userid);
+        if (result == null) {
+            throw new UserNotFoundException("用户未找到！");
+        }
+        Integer row = userMapper.changeInfoByUserid(userid, user.getEmail(), user.getPhone(), user.getGender());
+        if (row != 1) {
+            throw new UpdateUserException("更新用户信息失败！");
+        }
     }
 
     @Override
     public String updateAvatar(Integer userid, MultipartFile file) throws Exception {
         User result = userMapper.person(userid);
-        if (result.getConfirm()==0){
+        if (result.getConfirm() == 0) {
             throw new UnConfirmException("未验证邮箱不能修改信息！");
         }
         if (file.isEmpty()) {
@@ -162,9 +221,9 @@ public class UserServiceImpl implements UserService {
         if (!FILE_TYPES.contains(file.getContentType())) {
             throw new FileTypeException("不支持的格式!");
         }
-
-        //String path = ResourceUtils.getURL("classpath:").getPath()+"/picture";
-        String path ="E:\\IdeaProject\\User Management System\\src\\main\\resources\\static\\picture";
+//        String path = ResourceUtils.getURL("classpath:").getPath()+"/picture";
+        String path = "E:\\IdeaProject\\User Management System\\src\\main\\resources\\static\\picture";
+//        String path = "/home/picture";
         File directory = new File(path);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -172,15 +231,15 @@ public class UserServiceImpl implements UserService {
         String originalFilename = file.getOriginalFilename();
         String suffix = "";
         int index = originalFilename.lastIndexOf(".");
-        if (index>0){
+        if (index > 0) {
             suffix = originalFilename.substring(index);
         }
-        String fileName=UUID.randomUUID().toString()+suffix;
-        File dest = new File(directory,fileName);
+        String fileName = UUID.randomUUID().toString() + suffix;
+        File dest = new File(directory, fileName);
         try {
             file.transferTo(dest);
-            Integer row = userMapper.changeAvatar(userid,fileName);
-            if (row!=1){
+            Integer row = userMapper.changeAvatar(userid, fileName);
+            if (row != 1) {
                 throw new UpdateUserException("修改头像出现错误！");
             }
         } catch (IOException e) {
@@ -188,6 +247,18 @@ public class UserServiceImpl implements UserService {
             throw new FileUploadIOException("上传文件时出现读写错误!");
         }
         return fileName;
+    }
+
+    @Override
+    public void subUser(Integer userid) throws Exception {
+        User result = userMapper.person(userid);
+        if (result == null) {
+            throw new UserNotFoundException("用户未找到！");
+        }
+        Integer row = userMapper.delUserByid(userid);
+        if (row != 1){
+            throw new DeleteUserException("删除失败！");
+        }
     }
 
 }

@@ -21,8 +21,8 @@ public class EmailCode {
         helper.setFrom("439795561@qq.com");
         helper.setTo(email);
         helper.setText("<table align='center' width='50%'>" +
-                "<tr><td>验证码：" + code + "</td></tr>" +
-                "<tr><td align='right'>——by SUN</td></tr>" +
+                "<tr><td style='font-size: 30px'>验证码：" + code + "</td></tr>" +
+                "<tr><td align='right' style='font-size: 20px'>——by SUN</td></tr>" +
                 "</table>", true);
 
         javaMailSender.send(mimeMessage);

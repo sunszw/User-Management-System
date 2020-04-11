@@ -118,9 +118,9 @@ class ManagementApplicationTests {
 
     @Test
     void password() {
-        String pwd = encryptedPassword.getPassword("123", "AA384B0A-693F-425A-9012-0F7E3714A44A");
+        String pwd = encryptedPassword.getPassword("admin", "AB2D206C-37BD-4D2E-A988-2CE4A7B28F54");
         System.out.println(pwd);
-        System.out.println("56DC3A4924CEB38A1CA5AF076C199E5116C388C871150E75F6A4BE121F127A23");
+        System.out.println("7E0E835650010FCA13A26438B88546E52A3A73C7F279FC7F37C514A7915B3080");
     }
 
     @Test
@@ -140,6 +140,45 @@ class ManagementApplicationTests {
             builder.append(charStr.charAt(index));
         }
         System.out.println(builder.toString());
+    }
+
+    @Test
+    void testUInsert() {
+        int sum = 0;
+        for (int i = 151; i <= 2000; i++) {
+            User user = new User();
+            String saltUUID = UUID.randomUUID().toString().toUpperCase();
+            user.setUsername("user" + i);
+            String SHA256Pwd = encryptedPassword.getPassword("123", saltUUID);
+            user.setPassword(SHA256Pwd);
+            user.setSalt(saltUUID);
+            int num = 0;
+            if (i % 2 == 0) {
+                num = 1;
+            }
+            user.setGender(num);
+            StringBuilder str1 = new StringBuilder();
+            for (int j = 0; j < 8; j++) {
+                String ran = String.valueOf((int) (Math.random() * 9 + 1));
+                str1.append(ran);
+            }
+            user.setPhone("186" + str1.toString());
+            StringBuilder str2 = new StringBuilder();
+            for (int j = 0; j < 10; j++) {
+                String ran = String.valueOf((int) (Math.random() * 9 + 1));
+                str2.append(ran);
+            }
+            user.setEmail(str2.toString() + "@qq.com");
+            user.setAmount(Math.random() * 10000);
+            user.setAvatar("d5061dba0c9a45efb83abbab34981cfc.jpg");
+            user.setCredate(LocalDateTime.now());
+            user.setConfirm(num);
+            user.setVip((int) (Math.random() * 5));
+            userMapper.addUser(user);
+            System.out.println(user);
+            sum++;
+        }
+        System.out.println(sum);
     }
 
 }

@@ -12,20 +12,20 @@
     <div>
         <div id="div-email" style="margin-top:10px">
 
-            <label>验证邮箱后可修改个人信息！</label><input type="button" id="btn-confirm" value="验证邮箱"><br>
-
+            <label>验证邮箱后可修改个人信息！</label><input type="button" id="btn-email" value="验证邮箱"><br>
             <form id="form-email">
-                <input type="text" id="email" style="width: 200px">
-                <input type="button" id="btn-email" value=" 提 交 " style="width: 50px">
+                <input type="text" id="code" name="code" style="width: 200px">
+                <input type="button" id="btn-confirm" value=" 提 交 " style="width: 50px">
             </form>
         </div>
         <form id="form-avatar" enctype="multipart/form-data" style="margin-top:10px">
             <input type="file" name="file"><br>
-            <span style="margin-left: 100px"><input type="button" id="btn-upload" value="确定修改"></span>
+            <span style="margin-left: 50px;margin-top: 10px"><input type="button" id="btn-upload" value=" 确 定 修 改 "></span>
         </form>
         <div style="margin-top:10px">
-            <span><a href="/web/password.html"> 修改密码 </a></span>
-            <spanp style="margin-left:20px"><a href="/web/update.html"> 修改信息 </a></spanp>
+            <span><input type="button" value=" 修 改 密 码 " id="btn-pwd"></span>
+            <spanp style="margin-left:10px"><input type="button" value=" 修 改 信 息 " id="btn-change"></spanp>
+            <spanp style="margin-left:70%"><input type="button" value=" &nbsp 管 &nbsp 理 &nbsp 用 &nbsp 户 &nbsp " id="btn-info"></spanp>
         </div>
     </div>
 </div>
@@ -36,7 +36,8 @@
         <td width="20%">邮箱</td>
         <td width="20%">手机</td>
         <td width="5%">性别</td>
-        <td width="20%">余额</td>
+        <td width="10%">余额</td>
+        <td width="10%">VIP等级</td>
         <td width="10%">创建日期</td>
         <td width="10%">是否验证</td>
     </tr>
@@ -69,6 +70,7 @@
                         '<td>#{phone}</td>' +
                         '<td>#{gender}</td>' +
                         '<td>#{amount}</td>' +
+                        '<td>#{vip}</td>' +
                         '<td>#{credate}</td>' +
                         '<td>#{confirm}</td>' +
                         '</tr>';
@@ -89,6 +91,7 @@
                     html = html.replace(/#{phone}/g, user.phone);
                     html = html.replace(/#{gender}/g, user.gender);
                     html = html.replace(/#{amount}/g, user.amount);
+                    html = html.replace(/#{vip}/g, user.vip);
                     html = html.replace(/#{credate}/g, user.credate);
                     html = html.replace(/#{confirm}/g, user.confirm);
 
@@ -102,7 +105,8 @@
             }
         });
     });
-    $("#btn-confirm").click(function () {
+
+    $("#btn-email").click(function () {
         $.ajax({
             headers: {"token": localStorage.getItem("token")},
             url: "/user/email",
@@ -120,6 +124,32 @@
             }
         });
     });
+
+    $("#btn-confirm").click(function () {
+        if ($("#code").val() == "") {
+            alert("验证码不能为空！");
+            return;
+        }
+        $.ajax({
+            headers: {"token": localStorage.getItem("token")},
+            url: "/user/confirm",
+            type: "post",
+            data: $("#form-email").serialize(),
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    alert("验证成功！");
+                    window.location.reload();
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("未知错误，请稍后重试！");
+            }
+        });
+    });
+
     $("#btn-upload").click(function () {
         $.ajax({
             headers: {"token": localStorage.getItem("token")},
@@ -143,5 +173,56 @@
         });
     });
 
+    $("#btn-pwd").click(function () {
+        $.ajax({
+            headers: {"token": localStorage.getItem("token")},
+            url: "/user/person",
+            type: "get",
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    let user = json.data;
+                    if (user.confirm == 1) {
+                        location.href = "/web/password.html";
+                    } else {
+                        alert("请先验证邮箱！");
+                    }
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("未知错误，请稍后重试！");
+            }
+        });
+    });
+
+    $("#btn-change").click(function () {
+        $.ajax({
+            headers: {"token": localStorage.getItem("token")},
+            url: "/user/person",
+            type: "get",
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    let user = json.data;
+                    if (user.confirm == 1) {
+                        location.href = "/web/update.html";
+                    } else {
+                        alert("请先验证邮箱！");
+                    }
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("未知错误，请稍后重试！");
+            }
+        });
+    });
+
+    $("#btn-info").click(function () {
+        location.href = "/web/info.html";
+    });
 </script>
 </html>

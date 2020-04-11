@@ -6,6 +6,68 @@
     <script src="../jq/jquery-3.4.1.min.js" type="text/javascript" charset="UTF-8"></script>
 </head>
 <body>
+<table align="center" border="1">
+    <form id="form-change">
+        <tr>
+            <td>手机：</td>
+            <td colspan="2"><input type="text" id="phone" name="phone"></td>
+        </tr>
+        <tr>
+            <td>邮箱：</td>
+            <td colspan="2"><input type="text" id="email" name="email"></td>
+        </tr>
+        <tr>
+            <td>性别：</td>
+            <td colspan="2">
+                <select id="gender" name="gender">
+                    <option></option>
+                    <option value="0">女</option>
+                    <option value="1">男</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" colspan="3"><input type="button" value=" 提 交 " id="btn-change"></td>
+        </tr>
 
+    </form>
+</table>
 </body>
+<script type="text/javascript">
+    $("#btn-change").click(function () {
+        if ($("#phone").val() == "") {
+            alert("手机号码不能为空！");
+            return;
+        }
+        if ($("#email").val() == "") {
+            alert("邮箱不能为空！");
+            return;
+        }
+        if ($("#newPwd2").val() == "") {
+            alert("确认密码不能为空！");
+            return;
+        }
+        if ($("#gender").val() == "") {
+            alert("请选择性别！");
+            return;
+        }
+        $.ajax({
+            headers: {"token": localStorage.getItem("token")},
+            url: "/user/change",
+            type: "post",
+            data: $("#form-change").serialize(),
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    alert("修改成功！");
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("未知错误，请稍后重试！");
+            }
+        });
+    });
+</script>
 </html>
