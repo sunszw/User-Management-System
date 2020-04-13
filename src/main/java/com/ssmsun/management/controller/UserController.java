@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import static com.ssmsun.management.global.GlobalExceptionHandler.SUCCESS;
@@ -109,7 +110,7 @@ public class UserController {
 
     @PostMapping(path = "change")
     @ResponseBody
-    public Json<String> changeInfo(HttpServletRequest request, User user) throws Exception {
+    public Json<Void> changeInfo(HttpServletRequest request, User user) throws Exception {
         Integer userid = getUserIdFromToken(request);
         userService.updateInfo(userid,user);
         return new Json<>(SUCCESS);
@@ -117,9 +118,15 @@ public class UserController {
 
     @PostMapping(path = "{delid}/delete")
     @ResponseBody
-    public Json<String> delete(@PathVariable("delid") Integer userid) throws Exception {
+    public Json<Void> delete(@PathVariable("delid") Integer userid) throws Exception {
         userService.subUser(userid);
         return new Json<>(SUCCESS);
+    }
+
+    @GetMapping(path = "download")
+    @ResponseBody
+    public void download(HttpServletResponse response) throws Exception {
+        userService.downLoadUserData(response);
     }
 
     private Integer getUserIdFromToken(HttpServletRequest request) {

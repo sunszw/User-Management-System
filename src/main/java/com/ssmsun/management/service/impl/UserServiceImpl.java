@@ -6,16 +6,20 @@ import com.ssmsun.management.entity.User;
 import com.ssmsun.management.global.exception.*;
 import com.ssmsun.management.service.UserService;
 import com.ssmsun.management.util.encryption.EncryptedPassword;
+import com.ssmsun.management.util.excel.ExportExcel;
 import com.ssmsun.management.util.verify.code.EmailCode;
 import com.ssmsun.management.util.verify.code.RegCode;
 import com.ssmsun.management.util.verify.token.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -44,6 +48,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     EncryptedPassword encryptedPassword;
+
+    @Autowired
+    ExportExcel exportExcel;
 
     private String aliyunCode;
     private String aliyunCode2;
@@ -261,4 +268,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void downLoadUserData(HttpServletResponse response) throws Exception {
+        List<User> users=userMapper.getAllUser();
+        if (users == null) {
+            throw new UserNotFoundException("获取用户信息失败！");
+        }
+        exportExcel.UserExcel(users,response);
+    }
 }

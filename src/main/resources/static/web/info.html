@@ -12,7 +12,8 @@
 </div>
 <table align="center" border="1" width="90%">
     <tr>
-        <td colspan="10" align="right"><input type="button" value=" &nbsp 个 &nbsp 人 &nbsp 信 &nbsp 息 &nbsp " id="btn-person"></td>
+        <td colspan="8" align="right"><input type="button" value=" &nbsp 下 &nbsp 载 &nbsp 用 &nbsp 户 &nbsp 信 &nbsp 息 &nbsp " id="btn-down"></td>
+        <td colspan="2" align="right"><input type="button" value=" &nbsp 个 &nbsp 人 &nbsp 信 &nbsp 息 &nbsp " id="btn-person"></td>
     </tr>
     <tr align="center" style="font-size: 20px">
         <td>用户ID</td>
@@ -81,10 +82,10 @@
                 } else {
                     alert(json.message);
                 }
-            },
-            "error": function () {
-                alert("未知错误，请稍后重试！");
             }
+            // "error": function () {
+            //     alert("登录信息已过期，请重新登录！");
+            // }
         });
     });
 
@@ -101,10 +102,17 @@
                     } else {
                         alert(json.message);
                     }
+                },
+                "error": function () {
+                    alert("登录信息已过期，请重新登录！");
                 }
             });
         }
     }
+
+    $("#btn-down").click(function () {
+        location.href = "/user/download";
+    });
 
     $("#btn-photo").click(function () {
         location.href = "/picture/payPhoto/pay_picture.png";

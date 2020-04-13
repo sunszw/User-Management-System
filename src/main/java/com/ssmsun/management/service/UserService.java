@@ -6,6 +6,8 @@ import com.ssmsun.management.global.exception.UserNotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 public interface UserService {
@@ -33,6 +35,8 @@ public interface UserService {
     String updateAvatar(Integer userid, MultipartFile file) throws Exception;
 
     void subUser(Integer userid) throws Exception;
+
+    void downLoadUserData(HttpServletResponse response) throws Exception;
 
 
 }
