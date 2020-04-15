@@ -29,5 +29,4 @@ public class User implements Serializable {
     private Integer confirm;
     private Integer vip;
 
-
 }

@@ -20,80 +20,111 @@
     </resultMap>
 
     <insert id="addUser" useGeneratedKeys="true" keyProperty="userid">
-        insert into
-            pub_user(
-                username,password,salt,email,phone,gender,avatar,amount,credate,confirm,vip
-            )
-        values(
-            #{username},#{password},#{salt},#{email},#{phone},#{gender},#{avatar},#{amount},#{credate},#{confirm},#{vip}
-        )
+        insert into pub_user(username, password, salt, email, phone, gender, avatar, amount, credate, confirm, vip)
+        values (#{username}, #{password}, #{salt}, #{email}, #{phone}, #{gender}, #{avatar}, #{amount}, #{credate},
+                #{confirm}, #{vip})
     </insert>
 
     <delete id="delUserByid">
-        delete from
-            pub_user
-        where  userid=#{userid}
+        delete
+        from pub_user
+        where userid = #{userid}
     </delete>
 
     <update id="changeStatus">
         update
             pub_user
-        set
-            confirm = 1
-        where
-            userid=#{userid}
+        set confirm = 1
+        where userid = #{userid}
     </update>
 
     <update id="changePwd">
         update
             pub_user
-        set
-            password=#{password}
-        where
-            userid=#{userid}
+        set password=#{password}
+        where userid = #{userid}
     </update>
 
     <update id="changeAvatar">
         update
             pub_user
-        set
-            avatar=#{avatar}
-        where
-            userid=#{userid}
+        set avatar=#{avatar}
+        where userid = #{userid}
     </update>
 
     <update id="changeInfoByUserid">
         update
             pub_user
-        set
-            email=#{email},phone=#{phone},gender=#{gender}
-        where
-            userid=#{userid}
+        set email=#{email},
+            phone=#{phone},
+            gender=#{gender}
+        where userid = #{userid}
     </update>
 
     <select id="getUserByUsername" resultMap="UserMap">
-        select
-            userid,username,password,salt
-        from
-            pub_user
-        where
-            username=#{username}
+        select userid,
+               username,
+               password,
+               salt
+        from pub_user
+        where username = #{username}
     </select>
 
     <select id="getAllUser" resultMap="UserMap">
-        select
-            userid,username,email,phone,gender,amount,vip,credate,confirm
+        select userid,
+               username,
+               email,
+               phone,
+               gender,
+               amount,
+               vip,
+               credate,
+               confirm
+        from pub_user
+    </select>
+
+    <select id="getUserTotal" resultType="Integer">
+        select count(*)
+        from pub_user
+    </select>
+
+    <select id="paging" resultMap="UserMap" statementType="STATEMENT">
+        select userid,
+               username,
+               email,
+               phone,
+               gender,
+               amount,
+               vip,
+               credate,
+               confirm
         from
-            pub_user
+             pub_user
+        order by
+            userid
+        limit
+            <choose>
+            <when test="page != null">${page},20</when>
+            <otherwise>0,20</otherwise>
+            </choose>
     </select>
 
     <select id="person" resultMap="UserMap">
-        select
-            userid,username,password,salt,email,phone,gender,avatar,amount,vip,credate,confirm
-        from
-            pub_user
-        where
-            userid=#{userid}
+        select userid,
+               username,
+               password,
+               salt,
+               email,
+               phone,
+               gender,
+               avatar,
+               amount,
+               vip,
+               credate,
+               confirm
+        from pub_user
+        where userid = #{userid}
     </select>
+
 
 </mapper>

@@ -15,6 +15,10 @@ public interface UserMapper {
 
     List<User> getAllUser();
 
+    Integer getUserTotal();
+
+    List<User> paging(Integer page);
+
     User person(Integer userid);
 
     Integer changeStatus(Integer userid);
@@ -26,6 +30,7 @@ public interface UserMapper {
     Integer changeAvatar(Integer userid, String avatar);
 
     Integer delUserByid(Integer userid);
+
 
 
 }

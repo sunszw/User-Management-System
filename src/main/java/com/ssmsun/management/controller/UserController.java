@@ -71,8 +71,15 @@ public class UserController {
 
     @GetMapping(path = "info")
     @ResponseBody
-    public Json<List<User>> info() throws UserNotFoundException {
-        List<User> data = userService.userInfo();
+    public Json<List<User>> info(Integer page) throws UserNotFoundException {
+        List<User> data = userService.userInfo(page);
+        return new Json<>(SUCCESS, data);
+    }
+
+    @GetMapping(path = "total")
+    @ResponseBody
+    public Json<Integer> total() {
+        Integer data = userService.userTotal();
         return new Json<>(SUCCESS, data);
     }
 
@@ -116,7 +123,7 @@ public class UserController {
         return new Json<>(SUCCESS);
     }
 
-    @PostMapping(path = "{delid}/delete")
+    @PostMapping(path = "delete/{delid}")
     @ResponseBody
     public Json<Void> delete(@PathVariable("delid") Integer userid) throws Exception {
         userService.subUser(userid);

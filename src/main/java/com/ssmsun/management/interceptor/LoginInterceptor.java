@@ -24,8 +24,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             response.sendRedirect("/web/login.html");
             return false;
         }
-
-        redisTemplate.expire(token, 30, TimeUnit.MINUTES);
+        redisTemplate.expire(token, 10, TimeUnit.MINUTES);
         return true;
 
     }

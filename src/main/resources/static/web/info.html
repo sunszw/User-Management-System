@@ -12,8 +12,12 @@
 </div>
 <table align="center" border="1" width="90%">
     <tr>
-        <td colspan="8" align="right"><input type="button" value=" &nbsp 下 &nbsp 载 &nbsp 用 &nbsp 户 &nbsp 信 &nbsp 息 &nbsp " id="btn-down"></td>
-        <td colspan="2" align="right"><input type="button" value=" &nbsp 个 &nbsp 人 &nbsp 信 &nbsp 息 &nbsp " id="btn-person"></td>
+        <td colspan="8" align="right">
+            <input type="button" value=" &nbsp 下 &nbsp 载 &nbsp 用 &nbsp 户 &nbsp 信 &nbsp 息 &nbsp " id="btn-down">
+        </td>
+        <td colspan="2" align="right">
+            <input type="button" value=" &nbsp 个 &nbsp 人 &nbsp 信 &nbsp 息 &nbsp " id="btn-person">
+        </td>
     </tr>
     <tr align="center" style="font-size: 20px">
         <td>用户ID</td>
@@ -27,9 +31,23 @@
         <td>是否验证</td>
         <td> 操 作</td>
     </tr>
-    <tbody id="tid" style="font-size: 1px">
-    </tbody>
+    <tbody id="tid" style="font-size: 1px"></tbody>
 </table>
+<div style="display: flex;justify-content:center;align-items:center; margin-top: 20px">
+    <span>
+        <input type="button" id="btn-first" value="首页">
+        <input type="button" id="btn-previous" value="上一页">
+        <label> 当前第: </label><label id="start">1</label> 页
+        <input type="button" id="btn-next" value="下一页">
+        <input type="button" id="btn-last" value="末页">
+        <label>总页数: </label><label id="total"></label>
+    </span>
+    <span>
+        <label style="margin-left: 10px">跳转到：</label>
+        <input type="text" id="page" name="page" style="width: 50px">
+        <input id="btn-page" type="button" value=" &nbsp; G O &nbsp; ">
+    </span>
+</div>
 </body>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -37,11 +55,82 @@
             headers: {"token": localStorage.getItem("token")},
             url: "/user/info",
             type: "get",
+            data: {"page": 1},
             dataType: "json",
             success: function (json) {
                 if (json.state == 2000) {
                     let list = json.data;
-                    $("#tid").empty();
+
+                    for (let i = 0; i < list.length; i++) {
+                        let html = '<tr style="font-size: 10px">' +
+                            '<td>#{userid}</td>' +
+                            '<td>#{username}</td>' +
+                            '<td>#{email}</td>' +
+                            '<td>#{phone}</td>' +
+                            '<td>#{gender}</td>' +
+                            '<td>#{amount}</td>' +
+                            '<td>#{vip}</td>' +
+                            '<td>#{credate}</td>' +
+                            '<td>#{confirm}</td>' +
+                            '<td><input type="button" value=" 删 除 " onclick="del(#{delid})"></td>' +
+                            '</tr>';
+                        if (list[i].gender == 1) {
+                            list[i].gender = "男";
+                        } else {
+                            list[i].gender = "女";
+                        }
+                        if (list[i].confirm == 1) {
+                            list[i].confirm = "是";
+                        } else {
+                            list[i].confirm = "否";
+                        }
+                        html = html.replace(/#{userid}/g, list[i].userid);
+                        html = html.replace(/#{username}/g, list[i].username);
+                        html = html.replace(/#{email}/g, list[i].email);
+                        html = html.replace(/#{phone}/g, list[i].phone);
+                        html = html.replace(/#{gender}/g, list[i].gender);
+                        html = html.replace(/#{amount}/g, list[i].amount);
+                        html = html.replace(/#{vip}/g, list[i].vip);
+                        html = html.replace(/#{credate}/g, list[i].credate);
+                        html = html.replace(/#{confirm}/g, list[i].confirm);
+                        html = html.replace(/#{delid}/g, list[i].userid);
+                        $("#tid").append(html);
+                    }
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("登录信息已过期，请重新登录！");
+            }
+        });
+
+        $.ajax({
+            url: "/user/total",
+            type: "get",
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    $("#total").html(Math.ceil(json.data / 20));
+                }
+            },
+            "error": function () {
+                alert("登录信息已过期，请重新登录！");
+            }
+        });
+    });
+
+    $("#btn-first").click(function () {
+        $("#tid").empty();
+        $.ajax({
+            headers: {"token": localStorage.getItem("token")},
+            url: "/user/info",
+            type: "get",
+            data: {"page": 1},
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    let list = json.data;
                     for (let i = 0; i < list.length; i++) {
                         let html = '<tr style="font-size: 10px">' +
                             '<td>#{userid}</td>' +
@@ -79,20 +168,274 @@
 
                         $("#tid").append(html);
                     }
+                    $("#start").html(1);
                 } else {
                     alert(json.message);
                 }
+            },
+            "error": function () {
+                alert("登录信息已过期，请重新登录！");
             }
-            // "error": function () {
-            //     alert("登录信息已过期，请重新登录！");
-            // }
+        });
+    });
+
+    $("#btn-previous").click(function () {
+        let pages = $("#start").html().trim();
+        pages--;
+        if (pages <= 0) {
+            alert("已经是第一页！")
+            return;
+        }
+
+        $("#tid").empty();
+        $.ajax({
+            headers: {"token": localStorage.getItem("token")},
+            url: "/user/info",
+            type: "get",
+            data: {"page": pages},
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    let list = json.data;
+                    for (let i = 0; i < list.length; i++) {
+                        let html = '<tr style="font-size: 10px">' +
+                            '<td>#{userid}</td>' +
+                            '<td>#{username}</td>' +
+                            '<td>#{email}</td>' +
+                            '<td>#{phone}</td>' +
+                            '<td>#{gender}</td>' +
+                            '<td>#{amount}</td>' +
+                            '<td>#{vip}</td>' +
+                            '<td>#{credate}</td>' +
+                            '<td>#{confirm}</td>' +
+                            '<td><input type="button" value=" 删 除 " onclick="del(#{delid})"></td>' +
+                            '</tr>';
+                        if (list[i].gender == 1) {
+                            list[i].gender = "男";
+                        } else {
+                            list[i].gender = "女";
+                        }
+                        if (list[i].confirm == 1) {
+                            list[i].confirm = "是";
+                        } else {
+                            list[i].confirm = "否";
+                        }
+
+                        html = html.replace(/#{userid}/g, list[i].userid);
+                        html = html.replace(/#{username}/g, list[i].username);
+                        html = html.replace(/#{email}/g, list[i].email);
+                        html = html.replace(/#{phone}/g, list[i].phone);
+                        html = html.replace(/#{gender}/g, list[i].gender);
+                        html = html.replace(/#{amount}/g, list[i].amount);
+                        html = html.replace(/#{vip}/g, list[i].vip);
+                        html = html.replace(/#{credate}/g, list[i].credate);
+                        html = html.replace(/#{confirm}/g, list[i].confirm);
+                        html = html.replace(/#{delid}/g, list[i].userid);
+
+                        $("#tid").append(html);
+                    }
+                    $("#start").html(pages);
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("登录信息已过期，请重新登录！");
+            }
+        });
+    });
+
+    $("#btn-next").click(function () {
+        let pages = $("#start").html().trim();
+        pages++;
+        if (pages > Math.ceil($("#total").html().trim())) {
+            alert("已经是最后一页！")
+            return;
+        }
+
+        $("#tid").empty();
+        $.ajax({
+            headers: {"token": localStorage.getItem("token")},
+            url: "/user/info",
+            type: "get",
+            data: {"page": pages},
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    let list = json.data;
+                    for (let i = 0; i < list.length; i++) {
+                        let html = '<tr style="font-size: 10px">' +
+                            '<td>#{userid}</td>' +
+                            '<td>#{username}</td>' +
+                            '<td>#{email}</td>' +
+                            '<td>#{phone}</td>' +
+                            '<td>#{gender}</td>' +
+                            '<td>#{amount}</td>' +
+                            '<td>#{vip}</td>' +
+                            '<td>#{credate}</td>' +
+                            '<td>#{confirm}</td>' +
+                            '<td><input type="button" value=" 删 除 " onclick="del(#{delid})"></td>' +
+                            '</tr>';
+                        if (list[i].gender == 1) {
+                            list[i].gender = "男";
+                        } else {
+                            list[i].gender = "女";
+                        }
+                        if (list[i].confirm == 1) {
+                            list[i].confirm = "是";
+                        } else {
+                            list[i].confirm = "否";
+                        }
+
+                        html = html.replace(/#{userid}/g, list[i].userid);
+                        html = html.replace(/#{username}/g, list[i].username);
+                        html = html.replace(/#{email}/g, list[i].email);
+                        html = html.replace(/#{phone}/g, list[i].phone);
+                        html = html.replace(/#{gender}/g, list[i].gender);
+                        html = html.replace(/#{amount}/g, list[i].amount);
+                        html = html.replace(/#{vip}/g, list[i].vip);
+                        html = html.replace(/#{credate}/g, list[i].credate);
+                        html = html.replace(/#{confirm}/g, list[i].confirm);
+                        html = html.replace(/#{delid}/g, list[i].userid);
+
+                        $("#tid").append(html);
+                    }
+                    $("#start").html(pages);
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("登录信息已过期，请重新登录！");
+            }
+        });
+    });
+
+    $("#btn-last").click(function () {
+        $("#tid").empty();
+        $.ajax({
+            headers: {"token": localStorage.getItem("token")},
+            url: "/user/info",
+            type: "get",
+            data: {"page": $("#total").html()},
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    let list = json.data;
+                    for (let i = 0; i < list.length; i++) {
+                        let html = '<tr style="font-size: 10px">' +
+                            '<td>#{userid}</td>' +
+                            '<td>#{username}</td>' +
+                            '<td>#{email}</td>' +
+                            '<td>#{phone}</td>' +
+                            '<td>#{gender}</td>' +
+                            '<td>#{amount}</td>' +
+                            '<td>#{vip}</td>' +
+                            '<td>#{credate}</td>' +
+                            '<td>#{confirm}</td>' +
+                            '<td><input type="button" value=" 删 除 " onclick="del(#{delid})"></td>' +
+                            '</tr>';
+                        if (list[i].gender == 1) {
+                            list[i].gender = "男";
+                        } else {
+                            list[i].gender = "女";
+                        }
+                        if (list[i].confirm == 1) {
+                            list[i].confirm = "是";
+                        } else {
+                            list[i].confirm = "否";
+                        }
+
+                        html = html.replace(/#{userid}/g, list[i].userid);
+                        html = html.replace(/#{username}/g, list[i].username);
+                        html = html.replace(/#{email}/g, list[i].email);
+                        html = html.replace(/#{phone}/g, list[i].phone);
+                        html = html.replace(/#{gender}/g, list[i].gender);
+                        html = html.replace(/#{amount}/g, list[i].amount);
+                        html = html.replace(/#{vip}/g, list[i].vip);
+                        html = html.replace(/#{credate}/g, list[i].credate);
+                        html = html.replace(/#{confirm}/g, list[i].confirm);
+                        html = html.replace(/#{delid}/g, list[i].userid);
+
+                        $("#tid").append(html);
+                    }
+                    $("#start").html($("#total").html());
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("登录信息已过期，请重新登录！");
+            }
+        });
+    });
+
+    $("#btn-page").click(function () {
+        if ($("#page").val() == "" || $("#page").val() <= 0 || parseInt($("#page").val()) > parseInt($("#total").html())) {
+            return;
+        }
+        $("#tid").empty();
+        $.ajax({
+            headers: {"token": localStorage.getItem("token")},
+            url: "/user/info",
+            type: "get",
+            data: {"page": $("#page").val()},
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 2000) {
+                    let list = json.data;
+                    for (let i = 0; i < list.length; i++) {
+                        let html = '<tr style="font-size: 10px">' +
+                            '<td>#{userid}</td>' +
+                            '<td>#{username}</td>' +
+                            '<td>#{email}</td>' +
+                            '<td>#{phone}</td>' +
+                            '<td>#{gender}</td>' +
+                            '<td>#{amount}</td>' +
+                            '<td>#{vip}</td>' +
+                            '<td>#{credate}</td>' +
+                            '<td>#{confirm}</td>' +
+                            '<td><input type="button" value=" 删 除 " onclick="del(#{delid})"></td>' +
+                            '</tr>';
+                        if (list[i].gender == 1) {
+                            list[i].gender = "男";
+                        } else {
+                            list[i].gender = "女";
+                        }
+                        if (list[i].confirm == 1) {
+                            list[i].confirm = "是";
+                        } else {
+                            list[i].confirm = "否";
+                        }
+
+                        html = html.replace(/#{userid}/g, list[i].userid);
+                        html = html.replace(/#{username}/g, list[i].username);
+                        html = html.replace(/#{email}/g, list[i].email);
+                        html = html.replace(/#{phone}/g, list[i].phone);
+                        html = html.replace(/#{gender}/g, list[i].gender);
+                        html = html.replace(/#{amount}/g, list[i].amount);
+                        html = html.replace(/#{vip}/g, list[i].vip);
+                        html = html.replace(/#{credate}/g, list[i].credate);
+                        html = html.replace(/#{confirm}/g, list[i].confirm);
+                        html = html.replace(/#{delid}/g, list[i].userid);
+
+                        $("#tid").append(html);
+                    }
+                    $("#start").html($("#page").val());
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error": function () {
+                alert("登录信息已过期，请重新登录！");
+            }
         });
     });
 
     function del(delid) {
         if (confirm("确定删除该用户?")) {
             $.ajax({
-                url: "/user/" + delid + "/delete",
+                url: "/user/delete/" + delid,
                 type: "post",
                 dataType: "json",
                 success: function (json) {

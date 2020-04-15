@@ -3,19 +3,16 @@ package com.ssmsun.management;
 import com.ssmsun.management.dao.UserMapper;
 import com.ssmsun.management.entity.User;
 import com.ssmsun.management.util.encryption.EncryptedPassword;
-import io.lettuce.core.ScriptOutputType;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -31,13 +28,15 @@ class ManagementApplicationTests {
     @Autowired
     JavaMailSender javaMailSender;
 
+    @Autowired
+    RedisTemplate redisTemplate;
+
     @Test
     void contextLoads() {
     }
 
     @Test
     void testSHA256() {
-
         System.out.println(encryptedPassword.getPassword("123456", "HDGFHSDFHSDLHFKLHLKSDHFKLSHDFLK"));
     }
 
@@ -185,5 +184,10 @@ class ManagementApplicationTests {
     }
 
 
+    @Test
+    void Token(){
+        Object data = redisTemplate.opsForValue().get("02bff504-b6f0-45d2-b88f-f516da25c12d");
+        System.out.println(data);
+    }
 
 }

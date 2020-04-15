@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 public interface UserService {
@@ -20,7 +19,9 @@ public interface UserService {
 
     String login(String username, String password) throws Exception;
 
-    List<User> userInfo() throws UserNotFoundException;
+    List<User> userInfo(Integer page) throws UserNotFoundException;
+
+    Integer userTotal();
 
     User person(Integer userid) throws UserNotFoundException;
 

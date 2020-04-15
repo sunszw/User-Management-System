@@ -15,7 +15,7 @@ public class JWTUtil {
     public static final String SECRET = "GSDGUHSDSDBFJKSHASHFASHDIOASUJIO";
 
     //过期时间:毫秒
-    public static final long EXPIRE = 1000*60*60*24*7;
+    public static final long EXPIRE = 1000 * 60 * 10;
 
     /**
      * 生成Token
@@ -34,7 +34,7 @@ public class JWTUtil {
                 .setHeader(map)
                 .setSubject(subject)
                 .setIssuedAt(now)//签发时间
-                .setExpiration(new Date(now.getTime()+EXPIRE))//有效期
+                .setExpiration(new Date(now.getTime() + EXPIRE))//有效期
                 .signWith(SignatureAlgorithm.HS512, SECRET)//签名
                 .compact();
 

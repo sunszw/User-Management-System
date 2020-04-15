@@ -10,16 +10,15 @@ import com.ssmsun.management.util.excel.ExportExcel;
 import com.ssmsun.management.util.verify.code.EmailCode;
 import com.ssmsun.management.util.verify.code.RegCode;
 import com.ssmsun.management.util.verify.token.JWTUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -130,17 +129,24 @@ public class UserServiceImpl implements UserService {
         }
         String key = UUID.randomUUID().toString();
         String value = jwtUtil.createToken(String.valueOf(result.getUserid()));
-        redisTemplate.opsForValue().set(key, value, 30, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(key, value, 10, TimeUnit.MINUTES);
         return key;
     }
 
     @Override
-    public List<User> userInfo() throws UserNotFoundException {
-        List<User> users = userMapper.getAllUser();
+    public List<User> userInfo(Integer page) throws UserNotFoundException {
+
+        List<User> users = userMapper.paging((page - 1) * 20);
         if (users == null) {
             throw new UserNotFoundException("获取用户信息失败！");
         }
         return users;
+    }
+
+    @Override
+    public Integer userTotal() {
+        Integer total = userMapper.getUserTotal();
+        return total;
     }
 
     @Override
@@ -263,17 +269,17 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("用户未找到！");
         }
         Integer row = userMapper.delUserByid(userid);
-        if (row != 1){
+        if (row != 1) {
             throw new DeleteUserException("删除失败！");
         }
     }
 
     @Override
     public void downLoadUserData(HttpServletResponse response) throws Exception {
-        List<User> users=userMapper.getAllUser();
+        List<User> users = userMapper.getAllUser();
         if (users == null) {
             throw new UserNotFoundException("获取用户信息失败！");
         }
-        exportExcel.UserExcel(users,response);
+        exportExcel.UserExcel(users, response);
     }
 }
