@@ -10,9 +10,8 @@ import com.ssmsun.management.util.excel.ExportExcel;
 import com.ssmsun.management.util.verify.code.EmailCode;
 import com.ssmsun.management.util.verify.code.RegCode;
 import com.ssmsun.management.util.verify.token.JWTUtil;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -129,7 +128,7 @@ public class UserServiceImpl implements UserService {
         }
         String key = UUID.randomUUID().toString();
         String value = jwtUtil.createToken(String.valueOf(result.getUserid()));
-        redisTemplate.opsForValue().set(key, value, 10, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(key, value, 30, TimeUnit.MINUTES);
         return key;
     }
 

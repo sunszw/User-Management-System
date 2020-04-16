@@ -15,7 +15,7 @@ public class ExportExcel {
     public void UserExcel(List<User> userData, HttpServletResponse response) throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("用户信息表");
-        sheet.setColumnWidth(0, 50);
+        sheet.setColumnWidth(0, 255);
 
         for (int i = 0; i < userData.size(); i++) {
             HSSFRow row = sheet.createRow(i);

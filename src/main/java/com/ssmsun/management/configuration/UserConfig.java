@@ -23,19 +23,21 @@ public class UserConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         List<String> paths=new ArrayList<>();
+        paths.add("/html/index.html");
+        paths.add("/html/reg.html");
+        paths.add("/html/login.html");
+        paths.add("/html/info.html");
+        paths.add("/html/person.html");
+
+        paths.add("/style/**");
+        paths.add("/picture/**");
+
         paths.add("/user/phone");
         paths.add("/user/reg");
         paths.add("/user/login");
+        paths.add("/user/download");
 
-        paths.add("/user/jq/**");
-        paths.add("/picture/**");
 
-        paths.add("/web/index.html");
-        paths.add("/web/reg.html");
-        paths.add("/web/login.html");
-        paths.add("/web/info.html");
-        paths.add("/web/person.html");
-        paths.add("/web/login.html");
 
         registry.addInterceptor(getLoginInterceptor()).addPathPatterns("/**").excludePathPatterns(paths);
     }
@@ -48,5 +50,7 @@ public class UserConfig implements WebMvcConfigurer {
                 .allowedMethods("*")
                 .allowedHeaders("*");
     }
+
+
 
 }

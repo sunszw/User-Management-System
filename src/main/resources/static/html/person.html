@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="../jq/jquery-3.4.1.min.js" type="text/javascript" charset="UTF-8"></script>
+    <script src="../style/jq/jquery-3.4.1.min.js" charset="UTF-8"></script>
 </head>
 <body>
 
@@ -47,7 +47,7 @@
     </tbody>
 </table>
 </body>
-<script type="text/javascript">
+<script>
     $(document).ready(function () {
         $.ajax({
             headers: {"token": localStorage.getItem("token")},
@@ -104,6 +104,7 @@
             },
             "error": function () {
                 alert("登录信息已过期，请重新登录！");
+                location.href = "/html/login.html";
             }
         });
     });
@@ -123,6 +124,7 @@
             },
             "error": function () {
                 alert("登录信息已过期，请重新登录！");
+                location.href = "/html/login.html";
             }
         });
     });
@@ -148,6 +150,7 @@
             },
             "error": function () {
                 alert("登录信息已过期，请重新登录！");
+                location.href = "/html/login.html";
             }
         });
     });
@@ -171,6 +174,7 @@
             },
             "error": function () {
                 alert("登录信息已过期，请重新登录！");
+                location.href = "/html/login.html";
             }
         });
     });
@@ -185,7 +189,7 @@
                 if (json.state == 2000) {
                     let user = json.data;
                     if (user.confirm == 1) {
-                        location.href = "/web/password.html";
+                        location.href = "/html/password.html";
                     } else {
                         alert("请先验证邮箱！");
                     }
@@ -195,6 +199,7 @@
             },
             "error": function () {
                 alert("登录信息已过期，请重新登录！");
+                location.href = "/html/login.html";
             }
         });
     });
@@ -209,7 +214,7 @@
                 if (json.state == 2000) {
                     let user = json.data;
                     if (user.confirm == 1) {
-                        location.href = "/web/update.html";
+                        location.href = "/html/update.html";
                     } else {
                         alert("请先验证邮箱！");
                     }
@@ -219,12 +224,13 @@
             },
             "error": function () {
                 alert("登录信息已过期，请重新登录！");
+                location.href = "/html/login.html";
             }
         });
     });
 
     $("#btn-info").click(function () {
-        location.href = "/web/info.html";
+        location.href = "/html/info.html";
     });
 </script>
 </html>

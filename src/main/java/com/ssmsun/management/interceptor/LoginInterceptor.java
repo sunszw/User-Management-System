@@ -21,9 +21,10 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
         Object data = redisTemplate.opsForValue().get(token);
         if (data == null) {
-            response.sendRedirect("/web/login.html");
+            response.sendRedirect("/html/login.html");
             return false;
         }
+
         redisTemplate.expire(token, 10, TimeUnit.MINUTES);
         return true;
 

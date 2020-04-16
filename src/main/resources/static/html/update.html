@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="../jq/jquery-3.4.1.min.js" type="text/javascript" charset="UTF-8"></script>
+    <script src="../style/jq/jquery-3.4.1.min.js" charset="UTF-8"></script>
 </head>
 <body>
 <table align="center" border="1">
@@ -33,7 +33,7 @@
     </form>
 </table>
 </body>
-<script type="text/javascript">
+<script>
     $("#btn-change").click(function () {
         if ($("#phone").val() == "") {
             alert("手机号码不能为空！");
@@ -60,13 +60,14 @@
             success: function (json) {
                 if (json.state == 2000) {
                     alert("修改成功！");
-                    location.href = "/web/person.html";
+                    location.href = "/html/person.html";
                 } else {
                     alert(json.message);
                 }
             },
             "error": function () {
                 alert("登录信息已过期，请重新登录！");
+                location.href = "/html/login.html";
             }
         });
     });

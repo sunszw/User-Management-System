@@ -3,6 +3,7 @@ package com.ssmsun.management.controller;
 
 import com.ssmsun.management.entity.User;
 import com.ssmsun.management.global.exception.UserNotFoundException;
+import com.ssmsun.management.listener.OnlineListener;
 import com.ssmsun.management.service.impl.UserServiceImpl;
 import com.ssmsun.management.util.json.Json;
 import com.ssmsun.management.util.verify.token.JWTUtil;
@@ -101,7 +102,7 @@ public class UserController {
 
     @PostMapping(path = "password")
     @ResponseBody
-    public Json<String> password(HttpServletRequest request, @RequestParam("origPwd") String password,@RequestParam("newPwd") String newPwd, String code) throws Exception {
+    public Json<String> password(HttpServletRequest request, @RequestParam("origPwd") String password, @RequestParam("newPwd") String newPwd, String code) throws Exception {
         Integer userid = getUserIdFromToken(request);
         userService.updatePassword(userid, password, newPwd, code);
         return new Json<>(SUCCESS);
@@ -119,7 +120,7 @@ public class UserController {
     @ResponseBody
     public Json<Void> changeInfo(HttpServletRequest request, User user) throws Exception {
         Integer userid = getUserIdFromToken(request);
-        userService.updateInfo(userid,user);
+        userService.updateInfo(userid, user);
         return new Json<>(SUCCESS);
     }
 
@@ -136,11 +137,19 @@ public class UserController {
         userService.downLoadUserData(response);
     }
 
+    @GetMapping(path = "count")
+    @ResponseBody
+    public Json<Integer> getCount() {
+        Integer count = OnlineListener.getCount();
+        return new Json<>(SUCCESS, count);
+    }
+
     private Integer getUserIdFromToken(HttpServletRequest request) {
         String token = request.getHeader("token");
         String value = redisTemplate.opsForValue().get(token).toString();
         Integer userid = Integer.valueOf(jwtUtil.parseToken(value));
         return userid;
     }
+
 
 }

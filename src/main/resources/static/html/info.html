@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="../jq/jquery-3.4.1.min.js" type="text/javascript" charset="UTF-8"></script>
+    <script src="../style/jq/jquery-3.4.1.min.js" charset="UTF-8"></script>
 </head>
 <body>
 <h1 align="center">用户信息管理</h1>
 <div>
+    <span style="margin-left: 85%">当前在线人数: <label id="count"></label></span>
+</div>
+<div style="margin-top: 30px">
     <span style="margin-left: 90%"><input type="button" value=" &nbsp 捐 &nbsp 赠 &nbsp " id="btn-photo"></span>
 </div>
-<table align="center" border="1" width="90%">
+<table align="center" border="1" width="90%" style="margin-top: 10px">
     <tr>
         <td colspan="8" align="right">
             <input type="button" value=" &nbsp 下 &nbsp 载 &nbsp 用 &nbsp 户 &nbsp 信 &nbsp 息 &nbsp " id="btn-down">
@@ -49,7 +52,7 @@
     </span>
 </div>
 </body>
-<script type="text/javascript">
+<script>
     $(document).ready(function () {
         $.ajax({
             headers: {"token": localStorage.getItem("token")},
@@ -99,25 +102,49 @@
                 } else {
                     alert(json.message);
                 }
+
+                $.ajax({
+                    headers: {"token": localStorage.getItem("token")},
+                    url: "/user/total",
+                    type: "get",
+                    dataType: "json",
+                    success: function (json) {
+                        if (json.state == 2000) {
+                            $("#total").html(Math.ceil(json.data / 20));
+                        } else {
+                            alert(json.message);
+                        }
+                    },
+                    "error": function () {
+                        alert("登录信息已过期，请重新登录！");
+                        location.href = "/html/login.html";
+                    }
+                });
+
+                $.ajax({
+                    headers: {"token": localStorage.getItem("token")},
+                    url: "/user/count",
+                    type: "get",
+                    dataType: "json",
+                    success: function (json) {
+                        if (json.state == 2000) {
+                            $("#count").html(json.data);
+                        } else {
+                            alert(json.message);
+                        }
+                    },
+                    "error": function () {
+                        alert("登录信息已过期，请重新登录！");
+                        location.href = "/html/login.html";
+                    }
+                });
             },
             "error": function () {
                 alert("登录信息已过期，请重新登录！");
+                location.href = "/html/login.html";
             }
         });
 
-        $.ajax({
-            url: "/user/total",
-            type: "get",
-            dataType: "json",
-            success: function (json) {
-                if (json.state == 2000) {
-                    $("#total").html(Math.ceil(json.data / 20));
-                }
-            },
-            "error": function () {
-                alert("登录信息已过期，请重新登录！");
-            }
-        });
     });
 
     $("#btn-first").click(function () {
@@ -175,6 +202,7 @@
             },
             "error": function () {
                 alert("登录信息已过期，请重新登录！");
+                location.href = "/html/login.html";
             }
         });
     });
@@ -241,6 +269,7 @@
             },
             "error": function () {
                 alert("登录信息已过期，请重新登录！");
+                location.href = "/html/login.html";
             }
         });
     });
@@ -307,6 +336,7 @@
             },
             "error": function () {
                 alert("登录信息已过期，请重新登录！");
+                location.href = "/html/login.html";
             }
         });
     });
@@ -366,6 +396,7 @@
             },
             "error": function () {
                 alert("登录信息已过期，请重新登录！");
+                location.href = "/html/login.html";
             }
         });
     });
@@ -428,6 +459,7 @@
             },
             "error": function () {
                 alert("登录信息已过期，请重新登录！");
+                location.href = "/html/login.html";
             }
         });
     });
@@ -448,6 +480,7 @@
                 },
                 "error": function () {
                     alert("登录信息已过期，请重新登录！");
+                    location.href = "/html/login.html";
                 }
             });
         }
@@ -462,7 +495,7 @@
     });
 
     $("#btn-person").click(function () {
-        location.href = "/web/person.html";
+        location.href = "/html/person.html";
     });
 </script>
 </html>

@@ -3,10 +3,12 @@ package com.ssmsun.management;
 import com.ssmsun.management.dao.UserMapper;
 import com.ssmsun.management.entity.User;
 import com.ssmsun.management.util.encryption.EncryptedPassword;
+import com.ssmsun.management.util.verify.token.JWTUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
@@ -30,6 +32,9 @@ class ManagementApplicationTests {
 
     @Autowired
     RedisTemplate redisTemplate;
+
+    @Autowired
+    JWTUtil jwtUtil;
 
     @Test
     void contextLoads() {
@@ -185,9 +190,20 @@ class ManagementApplicationTests {
 
 
     @Test
-    void Token(){
-        Object data = redisTemplate.opsForValue().get("02bff504-b6f0-45d2-b88f-f516da25c12d");
-        System.out.println(data);
+    void token() {
+        Object value =  redisTemplate.opsForValue().get("69ff6d71-60be-4301-be25-7e6afa1ed862");
+        String id = jwtUtil.parseToken(value.toString());
+        System.out.println(value);
+        System.out.println(id);
+
+    }
+
+    @Test
+    void keys() {
+
+        Set<String> keys = redisTemplate.keys("*");
+
+        System.out.println(keys.size());
     }
 
 }

@@ -15,7 +15,7 @@ public class JWTUtil {
     public static final String SECRET = "GSDGUHSDSDBFJKSHASHFASHDIOASUJIO";
 
     //过期时间:毫秒
-    public static final long EXPIRE = 1000 * 60 * 10;
+    public static final long EXPIRE = 1000 * 60 * 60 * 24 * 7;
 
     /**
      * 生成Token
