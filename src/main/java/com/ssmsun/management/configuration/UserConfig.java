@@ -28,6 +28,8 @@ public class UserConfig implements WebMvcConfigurer {
         paths.add("/html/login.html");
         paths.add("/html/info.html");
         paths.add("/html/person.html");
+        paths.add("/html/password.html");
+        paths.add("/html/update.html");
 
         paths.add("/style/**");
         paths.add("/picture/**");
