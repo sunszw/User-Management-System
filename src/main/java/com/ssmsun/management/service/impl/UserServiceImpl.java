@@ -13,6 +13,7 @@ import com.ssmsun.management.util.verify.token.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
@@ -90,6 +91,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void emailCode(Integer userid) throws MessagingException {
+        User result = userMapper.person(userid);
+        StringBuilder builder = new StringBuilder();
+        String charStr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (int i = 0; i < 6; i++) {
+            int index = (int) (Math.random() * charStr.length());
+            builder.append(charStr.charAt(index));
+        }
+        mailCode = builder.toString();
+        emailCode.sendMail(result.getEmail(), mailCode);
+    }
+
+    @Override
     public void regUser(User user, String code) throws Exception {
         if (aliyunCode == null) {
             throw new VerifyGetFailException("获取验证码失败!");
@@ -134,7 +148,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> userInfo(Integer page) throws UserNotFoundException {
-
         List<User> users = userMapper.paging((page - 1) * 20);
         if (users == null) {
             throw new UserNotFoundException("获取用户信息失败！");
@@ -155,19 +168,6 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("查询信息失败!");
         }
         return result;
-    }
-
-    @Override
-    public void emailCode(Integer userid) throws MessagingException {
-        User result = userMapper.person(userid);
-        StringBuilder builder = new StringBuilder();
-        String charStr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        for (int i = 0; i < 6; i++) {
-            int index = (int) (Math.random() * charStr.length());
-            builder.append(charStr.charAt(index));
-        }
-        mailCode = builder.toString();
-        emailCode.sendMail(result.getEmail(), mailCode);
     }
 
     @Override
@@ -205,6 +205,7 @@ public class UserServiceImpl implements UserService {
             throw new UpdateUserException("修改密码失败！");
         }
     }
+
 
     @Override
     public void updateInfo(Integer userid, User user) throws Exception {

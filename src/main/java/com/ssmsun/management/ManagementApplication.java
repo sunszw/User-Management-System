@@ -9,9 +9,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 @MapperScan("com.ssmsun.management.dao")
 @ServletComponentScan
 public class ManagementApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(ManagementApplication.class, args);
     }
-
 }

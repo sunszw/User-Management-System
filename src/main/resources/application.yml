@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://106.54.169.249:3306/db1?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: admin
+
+  redis:
+    host: 106.54.169.249
+    password: 123456asd789
+
+  mail:
+    host: smtp.qq.com
+    port: 587
+    username: 439795561@qq.com
+    password: ytoffilklxoebjbi
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          socketFactoryClass: javax.net.ssl.SSLSocketFactory
+        debug: true
+
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+
+mybatis:
+  mapper-locations: classpath:mappers/*
+
+

@@ -1,20 +1,26 @@
 package com.ssmsun.management;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 import com.ssmsun.management.dao.UserMapper;
 import com.ssmsun.management.entity.User;
 import com.ssmsun.management.util.encryption.EncryptedPassword;
 import com.ssmsun.management.util.verify.token.JWTUtil;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -191,7 +197,7 @@ class ManagementApplicationTests {
 
     @Test
     void token() {
-        Object value =  redisTemplate.opsForValue().get("69ff6d71-60be-4301-be25-7e6afa1ed862");
+        Object value = redisTemplate.opsForValue().get("69ff6d71-60be-4301-be25-7e6afa1ed862");
         String id = jwtUtil.parseToken(value.toString());
         System.out.println(value);
         System.out.println(id);
@@ -204,6 +210,48 @@ class ManagementApplicationTests {
         Set<String> keys = redisTemplate.keys("*");
 
         System.out.println(keys.size());
+    }
+
+    @Test
+    void testResponse() throws IOException {
+
+        File file = new File("E:\\IdeaProject\\User Management System\\src\\main\\resources\\static\\lexicon\\敏感词库.txt");
+        FileInputStream fileInputStream = new FileInputStream(file);
+        InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+        String text = "";
+
+        while ((text = bufferedReader.readLine()) != null) {
+            System.out.println(text);
+            if ("asd中共退党asd".contains(text)) {
+                System.out.println("{\"state\":700,\"message\":\"用户名含有非法词汇，请修改后重新提交!\"}");
+            }
+        }
+
+    }
+
+    @Test
+    void testJson() throws JSONException, JsonProcessingException {
+        String str = "{ \"grzhzf\": 0.03, \"gzxfmxds\": [{\"hisyyxmbm\": \"669022145_SI\",\"yyxmbm\": \"66900000000001_SI\", \"hisyyxmmc\": \"范围外商品222\",\"zje\": 0.01,\"yyxmmc\":\"个账支付范围外商品\"}],\"zje\": 0.04,\"xzhxfje\": 0,\"zhye\": 3589.71,\"resultcode\": 0,\"xjzf\": 0.01,\"szhxfje\": 0.03,\"resulttext\": \"调用成功\" }";
+        JSONObject jsonObject = new JSONObject(str);
+
+        JSONArray jsonArray = jsonObject.getJSONArray("gzxfmxds");
+
+        System.out.println(jsonArray.getJSONObject(0).getString("hisyyxmbm"));
+        System.out.println(jsonArray.getJSONObject(0).getString("yyxmbm"));
+        System.out.println(jsonArray.getJSONObject(0).getString("hisyyxmmc"));
+        System.out.println(jsonArray.getJSONObject(0).getString("zje"));
+        System.out.println(jsonArray.getJSONObject(0).getString("yyxmmc"));
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("state",700);
+        map.put("message","用户名含有非法词汇，请修改后重新提交!");
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(map);
+
+        System.out.println(json);
+
     }
 
 }
