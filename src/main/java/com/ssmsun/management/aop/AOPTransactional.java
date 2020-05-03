@@ -31,28 +31,21 @@ public class AOPTransactional {
     public TransactionInterceptor txAdvice() {
         //事务管理规则，声明具备事务管理的方法名
         NameMatchTransactionAttributeSource source = new NameMatchTransactionAttributeSource();
-        //只读事务，不做更新操作
-        RuleBasedTransactionAttribute readOnlyTx = new RuleBasedTransactionAttribute();
-        readOnlyTx.setReadOnly(true);
-        //transactiondefinition 定义事务的隔离级别 PROPAGATION_NOT_SUPPORTED事务传播级别5，以非事务运行，如果当前存在事务，则把当前事务挂起
-        readOnlyTx.setPropagationBehavior(TransactionDefinition.PROPAGATION_NOT_SUPPORTED);
         //当前存在事务就使用当前事务，当前不存在事务就创建一个新的事务
         RuleBasedTransactionAttribute requiredTx = new RuleBasedTransactionAttribute();
-        //抛出异常后执行切点回滚
-        requiredTx.setRollbackRules(Collections.singletonList(new RollbackRuleAttribute(Error.class)));
         //PROPAGATION_REQUIRED:事务隔离性为1，若当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。这是默认值。
         requiredTx.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        //抛出异常后执行切点回滚
+        requiredTx.setRollbackRules(Collections.singletonList(new RollbackRuleAttribute(Error.class)));
         //设置事务失效时间，如果超过5秒，则回滚事务
         requiredTx.setTimeout(5000);
         Map<String, TransactionAttribute> txMap = new HashMap<>();
-
         txMap.put("regUser", requiredTx);
         txMap.put("userConfirm", requiredTx);
         txMap.put("update*", requiredTx);
         txMap.put("subUser", requiredTx);
 
         source.setNameMap(txMap);
-
         return new TransactionInterceptor(transactionManager,source);
     }
 

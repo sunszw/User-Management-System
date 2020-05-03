@@ -254,4 +254,10 @@ class ManagementApplicationTests {
 
     }
 
+    @Test
+    void aaa(){
+        List<User> users = userMapper.getAllUser();
+        System.out.println(users);
+    }
+
 }

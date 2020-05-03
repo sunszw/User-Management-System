@@ -32,7 +32,4 @@ spring:
       max-request-size: 50MB
 
 
-mybatis:
-  mapper-locations: classpath:mappers/*
-
 
