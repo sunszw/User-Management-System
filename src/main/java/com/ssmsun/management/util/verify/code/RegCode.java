@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class RegCode {
 
     public void sendCode(String phone,String code){
-        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "LTAI4Fe1pUNbUiSeYndRAWEX", "5hzWnJzB3eJ0n02C3aTfJLlp5o1SXu");
+        DefaultProfile profile = DefaultProfile.getProfile();
         IAcsClient client = new DefaultAcsClient(profile);
         CommonRequest request = new CommonRequest();
 
